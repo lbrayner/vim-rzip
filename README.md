@@ -7,7 +7,7 @@ Requires, in $PATH:
 - an unzip compatible command to browse;
 - and a zip compatible one to write.
 
-An example of an zip compatible dosbatch script for Windows using 7zip:
+An example of a zip compatible dosbatch script for Windows using 7zip:
 
 ```bat
 @echo off
