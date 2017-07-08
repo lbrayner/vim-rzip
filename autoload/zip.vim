@@ -32,12 +32,12 @@ fun! zip#Read(fname,mode)
   let repkeep= &report
   set report=10
 
-  let fname = g:GetFileName(a:fname)
+  let fname = s:GetFileName(a:fname)
   if fname =~# "::"
       let zipfile = getbufvar("#","zipfile","")
       let fname = substitute(fname,'.*::\(.*\)','\1',"")
   else
-      let zipfile = g:GetZipFile(a:fname)
+      let zipfile = s:GetZipFile(a:fname)
   endif
   if !executable(substitute(g:zip_unzipcmd,'\s\+.*$','',''))
    redraw!
@@ -65,7 +65,7 @@ fun! zip#Read(fname,mode)
   let &report= repkeep
 endfun
 
-function! g:GetZipFile(fname)
+function! s:GetZipFile(fname)
   if has("unix")
    let zipfile = substitute(a:fname,'zipfile:\(.\{-}\)::[^\\].*$','\1','')
   else
@@ -74,7 +74,7 @@ function! g:GetZipFile(fname)
   return zipfile
 endfunction
 
-function! g:GetFileName(fname)
+function! s:GetFileName(fname)
   if has("unix")
    let fname   = substitute(a:fname,'zipfile:.\{-}::\([^\\].*\)$','\1','')
   else
@@ -85,8 +85,26 @@ function! g:GetFileName(fname)
 endfunction
 
 
-function! g:MakeZipPattern(zipfile,fname)
+function! s:MakeZipPattern(zipfile,fname)
   return "zipfile:".a:zipfile.'::'.a:fname
+endfunction
+
+function! s:CopyFile(src,dst)
+    if has("win32") || has("win64")
+        exec "let errmsg = system('copy ".s:Escape(fnamemodify(a:src,':p'),0).' '
+                    \ .s:Escape(a:dst,0)." >nul')"
+        let errmsg = substitute(errmsg,"\r",'','e')
+    elseif has("unix") || has("win32unix")
+        let errmsg = system("cp ".s:Escape(fnamemodify(a:src,":p"),0)." "
+                    \ .s:Escape(a:dst,0)." >/dev/null")
+    else
+        throw "Error. Operating system not supported."
+    endif
+    if v:shell_error != 0
+        redraw!
+        echohl Error | echo "***error*** copying files " | echohl None
+        exec "throw ".errmsg
+    endif
 endfunction
 
 fun! s:ZipBrowseSelect(zipfname)
@@ -107,25 +125,36 @@ fun! s:ZipBrowseSelect(zipfname)
 
   let zipfile = b:zipfile
   let curfile= expand("%")
+  let zipfilebufnr= bufnr("%")
+
+  let zipfname = a:zipfname
+  if(zipfname =~# 'zipfile:')
+        let nested_zipfile_list =
+                    \ deepcopy(b:nested_zipfile_list,1)
+        let zipparent = b:zipfile
+        let zipname = rzip#util#escapeFileName(s:GetZipTail(zipfname))
+        call insert(nested_zipfile_list,
+                    \ {'zipname': zipname, 'zipfile': zipparent})
+  endif
 
   new
   if !exists("g:zip_nomax") || g:zip_nomax == 0
    wincmd _
   endif
   let s:zipfile_{winnr()}= curfile
-  let zipfname = a:zipfname
   if(zipfname =~# 'zipfile:')
       exe "keepalt e ".fnameescape(zipfname.'::'.fname)
+      let b:nested_zipfile_list = nested_zipfile_list
   else
-      exe "e ".fnameescape("zipfile:".zipfile.'::'.fname)
+      exe "keepalt e ".fnameescape("zipfile:".zipfile.'::'.fname)
   endif
   filetype detect
 
   let &report= repkeep
 endfun
 
-function! g:GetNestedZipFile(zipfile)
-    let head = g:GetZipFile(a:zipfile)
+function! s:GetNestedZipFile(zipfile)
+    let head = s:GetZipFile(a:zipfile)
     let ziplist = split(a:zipfile,'::')[1:]
     let ziplist = insert(ziplist,head)
     let index = 1
@@ -166,18 +195,32 @@ fun! s:ChgDir(newdir,errlvl,errmsg)
   return 0
 endfun
 
+function! s:GetZipTail(fname)
+    return substitute(a:fname,'.*::\(.*\)','\1',"")
+endfunction
+
 fun! zip#Browse(zipfile)
     let zipfile = a:zipfile
   if !filereadable(zipfile) || readfile(zipfile, "", 1)[0] !~ '^PK'
-        if !filereadable(g:GetZipFile(zipfile))
+        if !filereadable(s:GetZipFile(zipfile))
             exe "noautocmd e ".fnameescape(zipfile)
             return
         else
-            let head = g:GetZipFile(zipfile)
-            let tail = g:GetFileName(zipfile)
-            let zipfilename = g:MakeZipPattern(head,tail)
-            let zipdelete = 1
-            let zipfile = g:GetNestedZipFile(zipfile)
+            let head = s:GetZipFile(zipfile)
+            let tail = s:GetFileName(zipfile)
+            let zipfilename = s:MakeZipPattern(head,tail)
+            let zipnested = 1
+            let zipfile = s:GetNestedZipFile(zipfile)
+            if has_key(getbufvar('#',''),'nested_zipfile_list')
+                let nested_zipfile_list =
+                            \ deepcopy(getbufvar('#','nested_zipfile_list'),1)
+                let zipparent = getbufvar('#','zipfile')
+                let zipname = s:GetZipTail(s:GetZipTail(a:zipfile))
+                call insert(nested_zipfile_list,
+                            \ {'zipname': zipname, 'zipfile': zipparent})
+            else
+                let b:nested_zipfile_list = [{'zipname': head, 'zipfile': head}]
+            endif
         endif
   else
         let zipfilename = zipfile
@@ -237,10 +280,11 @@ fun! zip#Browse(zipfile)
   endif
 
   setlocal noma nomod ro
-  noremap <silent> <buffer> <cr>	:exec "call <SID>ZipBrowseSelect('".expand('%')."')"<cr>
-  noremap <silent> <buffer> x		:call zip#Extract()<cr>
 
-  if exists("l:zipdelete")
+  noremap <silent> <buffer> <cr>    :exec "keepalt call <SID>ZipBrowseSelect('".expand('%')."')"<cr>
+  noremap <silent> <buffer> x       :call zip#Extract()<cr>
+
+  if exists("l:zipnested")
       autocmd! BufUnload <buffer> exe "exe \"call "
                   \ . "delete('\".getbufvar(".expand('<abuf>').",'zipfile').\"')\""
   endif
@@ -248,7 +292,55 @@ fun! zip#Browse(zipfile)
   let &report= repkeep
 endfun
 
-fun! zip#Write(fname)
+function! s:RWrite(bufnr)
+    let nested_zipfile_list = getbufvar(str2nr(a:bufnr),'nested_zipfile_list')
+    let fname = s:GetZipTail(getbufinfo(str2nr(a:bufnr))[0]['name'])
+    let zipfile = nested_zipfile_list[0]['zipfile']
+
+    if fname =~ '/'
+        let dirpath = substitute(fname,'/[^/]\+$','','e')
+        if has("win32unix") && executable("cygpath")
+            let dirpath = substitute(system("cygpath ".s:Escape(dirpath,0)),'\n','','e')
+        endif
+        call mkdir(dirpath,"p")
+    endif
+
+    exe "w! ".fnameescape(fname)
+
+    call system(g:zip_zipcmd." -u ".s:Escape(fnamemodify(zipfile,":p"),0)." "
+                \ .s:Escape(fname,0))
+
+    let index = 0
+    while index < len(nested_zipfile_list)-1
+        let zipfile = nested_zipfile_list[index+1]['zipfile']
+        let fname = nested_zipfile_list[index]['zipname']
+        let temp = nested_zipfile_list[index]['zipfile']
+
+        if fname =~ '/'
+            let dirpath = substitute(fname,'/[^/]\+$','','e')
+            if has("win32unix") && executable("cygpath")
+                let dirpath = substitute(system("cygpath ".s:Escape(dirpath,0)),'\n','','e')
+            endif
+            call mkdir(dirpath,"p")
+        endif
+
+        call s:CopyFile(temp,fname)
+
+        let errmsg = system(g:zip_zipcmd." -u ".s:Escape(fnamemodify(zipfile,":p"),0)." "
+                    \ .s:Escape(fname,0))
+
+        if v:shell_error != 0
+            redraw!
+            throw errmsg
+        endif
+        let index += 1
+    endwhile
+    let dict = {'zipfile': nested_zipfile_list[index]['zipfile']
+                \ , 'fname': nested_zipfile_list[index-1]['zipname'] }
+    return dict
+endfunction
+
+fun! zip#Write(bufnr)
   let repkeep= &report
   set report=10
 
@@ -283,28 +375,29 @@ fun! zip#Write(fname)
   call mkdir("_ZIPVIM_")
   cd _ZIPVIM_
 
-  let fname = g:GetFileName(a:fname)
-  let zipfile = g:GetZipFile(a:fname)
-
-  if fname =~ '/'
-   let dirpath = substitute(fname,'/[^/]\+$','','e')
-   if has("win32unix") && executable("cygpath")
-    let dirpath = substitute(system("cygpath ".s:Escape(dirpath,0)),'\n','','e')
-   endif
-   call mkdir(dirpath,"p")
-  endif
-  if zipfile !~ '/'
-   let zipfile= curdir.'/'.zipfile
-  endif
-
-  if fname =~# "::"
-      let zipfile = getbufvar("#","zipfile","")
-      let fname = substitute(fname,'.*::\(.*\)','\1',"")
+  if has_key(getbufvar(str2nr(a:bufnr),''),'nested_zipfile_list')
+      let dict = s:RWrite(str2nr(a:bufnr))
+      let fname = dict['fname']
+      let zipfile = dict['zipfile']
   else
-      let zipfile = g:GetZipFile(a:fname)
+      let fname = getbufinfo(str2nr(a:bufnr))[0]['name']
+      let zipfile = rzip#util#escapeFileName(s:GetZipFile(fname))
+      let fname = rzip#util#escapeFileName(s:GetFileName(fname))
+
+      if fname =~ '/'
+       let dirpath = substitute(fname,'/[^/]\+$','','e')
+       if has("win32unix") && executable("cygpath")
+        let dirpath = substitute(system("cygpath ".s:Escape(dirpath,0)),'\n','','e')
+       endif
+       call mkdir(dirpath,"p")
+      endif
+      if zipfile !~ '/'
+       let zipfile= curdir.'/'.zipfile
+      endif
+
+      exe "w! ".fnameescape(fname)
   endif
 
-  exe "w! ".fnameescape(fname)
   if has("win32unix") && executable("cygpath")
    let zipfile = substitute(system("cygpath ".s:Escape(zipfile,0)),'\n','','e')
   endif
@@ -313,9 +406,11 @@ fun! zip#Write(fname)
     let fname = substitute(fname, '[', '[[]', 'g')
   endif
 
-  call system(g:zip_zipcmd." -u ".s:Escape(fnamemodify(zipfile,":p"),0)." ".s:Escape(fname,0))
+  let msg = system(g:zip_zipcmd." -u ".s:Escape(fnamemodify(zipfile,":p"),0)." ".s:Escape(fname,0))
   if v:shell_error != 0
    redraw!
+   let msg = substitute(msg,"\r","","ge")
+   echoerr msg
    echohl Error | echo "***error*** (zip#Write) sorry, unable to update ".zipfile." with ".fname | echohl None
 
   elseif s:zipfile_{winnr()} =~ '^\a\+://'
@@ -331,7 +426,7 @@ fun! zip#Write(fname)
    q!
    unlet s:zipfile_{winnr()}
   endif
-  
+
   cd ..
   call s:Rmdir("_ZIPVIM_")
   call s:ChgDir(curdir,s:WARNING,"(zip#Write) unable to return to ".curdir."!")
