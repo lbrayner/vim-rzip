@@ -91,11 +91,11 @@ endfunction
 
 function! s:CopyFile(src,dst)
     if has("win32") || has("win64")
-        exec "let errmsg = system('copy ".s:Escape(fnamemodify(a:src,':p'),0).' '
+        exec "let errmsg = system('copy /y ".s:Escape(fnamemodify(a:src,':p'),0).' '
                     \ .s:Escape(a:dst,0)." >nul')"
         let errmsg = substitute(errmsg,"\r",'','e')
     elseif has("unix") || has("win32unix")
-        let errmsg = system("cp ".s:Escape(fnamemodify(a:src,":p"),0)." "
+        let errmsg = system("cp -f ".s:Escape(fnamemodify(a:src,":p"),0)." "
                     \ .s:Escape(a:dst,0)." >/dev/null")
     else
         throw "Error. Operating system not supported."
