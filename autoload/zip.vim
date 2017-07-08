@@ -166,6 +166,7 @@ function! s:GetNestedZipFile(zipfile)
             let container = temp
         endif
         let temp = tempname()
+        let temp = temp.".zip"
         let target = ziplist[index]
         exe "sil! !".g:zip_unzipcmd." -p -- ".s:Escape(container,1)." "
                     \ .s:Escape(fnameescape(target),1).' > '.temp
@@ -307,8 +308,12 @@ function! s:RWrite(bufnr)
 
     exe "w! ".fnameescape(fname)
 
-    call system(g:zip_zipcmd." -u ".s:Escape(fnamemodify(zipfile,":p"),0)." "
+    let errmsg = system(g:zip_zipcmd." -u ".s:Escape(fnamemodify(zipfile,":p"),0)." "
                 \ .s:Escape(fname,0))
+    if v:shell_error != 0
+        redraw!
+        throw errmsg
+    endif
 
     let index = 0
     while index < len(nested_zipfile_list)-1
@@ -326,17 +331,20 @@ function! s:RWrite(bufnr)
 
         call s:CopyFile(temp,fname)
 
-        let errmsg = system(g:zip_zipcmd." -u ".s:Escape(fnamemodify(zipfile,":p"),0)." "
-                    \ .s:Escape(fname,0))
-
-        if v:shell_error != 0
-            redraw!
-            throw errmsg
+        if index < len(nested_zipfile_list)-2
+            let errmsg = system(g:zip_zipcmd." -u
+                        \ ".s:Escape(fnamemodify(zipfile,":p"),0)." "
+                        \ .s:Escape(fname,0))
+            if v:shell_error != 0
+                redraw!
+                throw errmsg
+            endif
         endif
+
         let index += 1
     endwhile
-    let dict = {'zipfile': nested_zipfile_list[index]['zipfile']
-                \ , 'fname': nested_zipfile_list[index-1]['zipname'] }
+    let dict = {'zipfile': nested_zipfile_list[len(nested_zipfile_list)-1]['zipfile']
+                \ , 'fname': nested_zipfile_list[len(nested_zipfile_list)-2]['zipname'] }
     return dict
 endfunction
 
