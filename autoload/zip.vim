@@ -91,13 +91,19 @@ endfunction
 
 function! s:CopyFile(src,dst)
     if has("win32") || has("win64")
-        if executable('cp')
-        let copycmd = 'let errmsg = system("cp -f '.s:Escape(fnamemodify(a:src,":p"),0)
-                    \ ." ".s:Escape(a:dst,0).'")' " in case &shellslash and SHELL is e.g. bash
+        if &shellslash
+            if executable('cp')
+                let copycmd = 'let errmsg = system("cp -f '
+                            \ .s:Escape(fnamemodify(a:src,":p"),0)
+                            \ ." ".s:Escape(a:dst,0).'")'
+            else
+                throw "This configuration is not supported: "
+                            \ . "[shellslash && !executable('cp')]"
+            endif
         else
-            let copycmd = 'let errmsg = system("cmd.exe /c copy /y '
+            let copycmd = "let errmsg = system('cmd.exe /c copy /y "
                         \ .s:Escape(fnamemodify(a:src,':p'),0).' '
-                        \ .s:Escape(a:dst,0).'")'
+                        \ .s:Escape(a:dst,0)."')"
         endif
         exec copycmd
         let errmsg = substitute(errmsg,"\r",'','e')
