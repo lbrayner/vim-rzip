@@ -11,7 +11,11 @@ let g:zipPlugin_ext_dict = {
             \ 'xpi': '','zip': ''
             \ } " duplicate entry xlam removed
 
-let g:zipPlugin_ext = ""
+if exists("g:zipPlugin_extra_ext")
+    let g:zipPlugin_ext = g:zipPlugin_extra_ext
+else
+    let g:zipPlugin_ext = ""
+endif
 
 for key in keys(g:zipPlugin_ext_dict)
     let item = ',*.'.key
