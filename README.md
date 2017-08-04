@@ -2,10 +2,17 @@ Extends stock zip.vim to allow recursively browsing and writing zip files.
 
 VimL and system calls only (zip, unzip and copy file).
 
-Requires, in $PATH:
+# Requirements
+
+In $PATH:
 
 - an unzip compatible command to browse;
-- and a zip compatible one to write.
+- a zip compatible one to write;
+- and the builtin **getbufinfo✝** function.
+
+✝ Avalialble in *Vim 8.0* and *Neovim 0.2.0*.
+
+# Appendix
 
 An example of a zip compatible dosbatch script for Windows using 7zip:
 
