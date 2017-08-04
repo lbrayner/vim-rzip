@@ -4,13 +4,23 @@ VimL and system calls only (zip, unzip and copy file).
 
 # Requirements
 
+## To browse
+
 In $PATH:
 
-- an unzip compatible command to browse;
-- a zip compatible one to write;
-- and the builtin **getbufinfo✝** function.
+- an unzip compatible command.
 
-✝ Avalialble in *Vim 8.0* and *Neovim 0.2.0*.
+## To write
+
+In $PATH:
+
+- a zip compatible command.
+
+Vim:
+
+- *Vim 8.0✝* and *Neovim 0.2.0✝*.
+
+✝ **getbufinfo()**, available since 8.0, required.
 
 # Appendix
 
