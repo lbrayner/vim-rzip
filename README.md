@@ -18,9 +18,17 @@ In $PATH:
 
 Vim:
 
-- *Vim 8.0✝* and *Neovim 0.2.0✝*.
+- *Vim 7.4✝* or *Neovim 0.1.7*.
 
-✝ **getbufinfo()**, available since 8.0, required.
+✝ Confirmed working on Vim 7.4-1024 for Windows.
+
+# Configuration
+
+Extra file extensions can be added with **g:zipPlugin_extra_ext**. For example:
+
+```vim
+let g:zipPlugin_extra_ext = '*.odt,*.mfh'
+```
 
 # Appendix
 

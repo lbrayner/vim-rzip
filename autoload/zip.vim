@@ -48,7 +48,8 @@ fun! zip#Read(fname,mode)
 
   let extension   = fnamemodify(fname,':e')
   if has_key(g:zipPlugin_ext_dict,extension)
-      return v:null  " let zip#Browse (triggered by an autocmd) handle the nested zip file
+      " return v:null  " let zip#Browse (triggered by an autocmd) handle the nested zip file
+      return
   endif
   let temp = tempname()
   let fn   = expand('%:p')
@@ -308,7 +309,8 @@ endfun
 
 function! s:RWrite(bufnr)
     let nested_zipfile_list = getbufvar(str2nr(a:bufnr),'nested_zipfile_list')
-    let fname = s:GetZipTail(getbufinfo(str2nr(a:bufnr))[0]['name'])
+    " let fname = s:GetZipTail(getbufinfo(str2nr(a:bufnr))[0]['name'])
+    let fname = s:GetZipTail(bufname(a:bufnr))
     let zipfile = nested_zipfile_list[0]['zipfile']
 
     if fname =~ '/'
@@ -401,7 +403,8 @@ fun! zip#Write(bufnr)
       let fname = dict['fname']
       let zipfile = dict['zipfile']
   else
-      let fname = getbufinfo(str2nr(a:bufnr))[0]['name']
+      " let fname = getbufinfo(str2nr(a:bufnr))[0]['name']
+      let fname = bufname(a:bufnr)
       let zipfile = rzip#util#escapeFileName(s:GetZipFile(fname))
       let fname = rzip#util#escapeFileName(s:GetFileName(fname))
 
