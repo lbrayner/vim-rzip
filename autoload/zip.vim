@@ -404,7 +404,7 @@ fun! zip#Write(bufnr)
       let zipfile = dict['zipfile']
   else
       " let fname = getbufinfo(str2nr(a:bufnr))[0]['name']
-      let fname = bufname(a:bufnr)
+      let fname = bufname(str2nr(a:bufnr))
       let zipfile = rzip#util#escapeFileName(s:GetZipFile(fname))
       let fname = rzip#util#escapeFileName(s:GetFileName(fname))
 
