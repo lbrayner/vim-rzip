@@ -32,7 +32,10 @@ let g:zipPlugin_extra_ext = '*.odt,*.mfh'
 
 # Appendix
 
-An example of a zip compatible dosbatch script for Windows using 7zip:
+You can get the *unzip.exe* binary for Windows [here](http://www.stahlworks.com/dev/index.php?tool=zipunzip).
+
+A zip-compatible program need only implement the **-u** (*update*) command line switch.
+An example of a zip-compatible dosbatch script for Windows using 7zip:
 
 ```bat
 @echo off
