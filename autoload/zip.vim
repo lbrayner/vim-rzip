@@ -2,6 +2,7 @@ let zipdotvim = rzip#util#escapeFileName($VIMRUNTIME).'/autoload/zip.vim'
 
 exec "source ".zipdotvim
 
+let g:loaded_zip= "v27m-rzip"
 let s:zipfile_escape = ' ?&;\'
 let s:ERROR          = 2
 let s:WARNING        = 1

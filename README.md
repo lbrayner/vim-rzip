@@ -4,6 +4,10 @@ VimL and system calls only (zip, unzip and copy file).
 
 # Requirements
 
+- *Vim 7.4✝* or *Neovim 0.1.7*.
+
+✝ Confirmed working on Vim 7.4-1024 for Windows.
+
 ## To browse
 
 In $PATH:
@@ -15,12 +19,6 @@ In $PATH:
 In $PATH:
 
 - a zip compatible command.
-
-Vim:
-
-- *Vim 7.4✝* or *Neovim 0.1.7*.
-
-✝ Confirmed working on Vim 7.4-1024 for Windows.
 
 # Configuration
 
