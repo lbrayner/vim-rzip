@@ -30,6 +30,8 @@ let g:zipPlugin_extra_ext = '*.odt,*.mfh'
 
 # Appendix
 
+On Unix just install zip and unzip packages.
+
 You can get the *unzip.exe* binary for Windows [here](http://www.stahlworks.com/dev/index.php?tool=zipunzip).
 
 A zip-compatible program need only implement the **-u** (*update*) command line switch.
@@ -51,3 +53,5 @@ if "%~1" == "-u" (
 
 7z %*
 ```
+
+Save this as zip.bat and put in your $PATH.
