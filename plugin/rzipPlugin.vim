@@ -3,6 +3,13 @@ if &cp || exists("g:loaded_rzipPlugin")
 endif
 let g:loaded_rzip= "v27m-rzip"
 
+if exists("g:loaded_zip")
+    unlet g:loaded_zip
+endif
+let zipPlugindotvim = rzip#util#escapeFileName($VIMRUNTIME).'/plugin/zipPlugin.vim'
+exec "source ".zipPlugindotvim
+let g:loaded_zip=1
+
 let g:rzipPlugin_ext_dict = {
             \ 'apk': '','celzip': '','crtx': '','docm': '',
             \ 'docx': '','dotm': '','dotx': '','ear': '',

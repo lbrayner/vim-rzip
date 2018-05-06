@@ -2,9 +2,12 @@ if &cp || exists("g:loaded_rzipPlugin")
     finish
 endif
 
+if exists("g:loaded_zip")
+    unlet g:loaded_zip
+endif
 let zipdotvim = rzip#util#escapeFileName($VIMRUNTIME).'/autoload/zip.vim'
-
 exec "source ".zipdotvim
+let g:loaded_zip=1
 
 let g:loaded_rzip= "v27m-rzip"
 let s:zipfile_escape = ' ?&;\'
