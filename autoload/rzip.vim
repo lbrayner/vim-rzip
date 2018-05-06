@@ -1,8 +1,12 @@
+if &cp || exists("g:loaded_rzipPlugin")
+    finish
+endif
+
 let zipdotvim = rzip#util#escapeFileName($VIMRUNTIME).'/autoload/zip.vim'
 
 exec "source ".zipdotvim
 
-let g:loaded_zip= "v27m-rzip"
+let g:loaded_rzip= "v27m-rzip"
 let s:zipfile_escape = ' ?&;\'
 let s:ERROR          = 2
 let s:WARNING        = 1
@@ -29,7 +33,7 @@ fun! s:Escape(fname,isfilt)
   return qnameq
 endfun
 
-fun! zip#Read(fname,mode)
+fun! rzip#Read(fname,mode)
   let repkeep= &report
   set report=10
 
@@ -42,14 +46,14 @@ fun! zip#Read(fname,mode)
   endif
   if !executable(substitute(g:zip_unzipcmd,'\s\+.*$','',''))
    redraw!
-   echohl Error | echo "***error*** (zip#Read) sorry, your system doesn't appear to have the ".g:zip_unzipcmd." program" | echohl None
+   echohl Error | echo "***error*** (rzip#Read) sorry, your system doesn't appear to have the ".g:zip_unzipcmd." program" | echohl None
    let &report= repkeep
    return
   endif
 
   let extension   = fnamemodify(fname,':e')
   if has_key(g:zipPlugin_ext_dict,extension)
-      " return v:null  " let zip#Browse (triggered by an autocmd) handle the nested zip file
+      " return v:null  " let rzip#Browse (triggered by an autocmd) handle the nested zip file
       return
   endif
   let temp = tempname()
@@ -133,7 +137,7 @@ fun! s:ZipBrowseSelect(zipfname)
   endif
   if fname =~ '/$'
    redraw!
-   echohl Error | echo "***error*** (zip#Browse) Please specify a file, not a directory" | echohl None
+   echohl Error | echo "***error*** (rzip#Browse) Please specify a file, not a directory" | echohl None
    let &report= repkeep
    return
   endif
@@ -215,7 +219,7 @@ function! s:GetZipTail(fname)
     return substitute(a:fname,'.*::\(.*\)','\1',"")
 endfunction
 
-fun! zip#Browse(zipfile)
+fun! rzip#Browse(zipfile)
     let zipfile = a:zipfile
   if !filereadable(zipfile) || readfile(zipfile, "", 1)[0] !~ '^PK'
         if !filereadable(s:GetZipFile(zipfile))
@@ -253,14 +257,14 @@ fun! zip#Browse(zipfile)
   endif
   if !executable(g:zip_unzipcmd)
    redraw!
-   echohl Error | echo "***error*** (zip#Browse) unzip not available on your system"
+   echohl Error | echo "***error*** (rzip#Browse) unzip not available on your system"
    let &report= repkeep
    return
   endif
   if !filereadable(zipfile)
    if zipfile !~# '^\a\+://'
     redraw!
-    echohl Error | echo "***error*** (zip#Browse) File not readable<".zipfile.">" | echohl None
+    echohl Error | echo "***error*** (rzip#Browse) File not readable<".zipfile.">" | echohl None
    endif
    let &report= repkeep
    return
@@ -277,7 +281,7 @@ fun! zip#Browse(zipfile)
   setlocal nowrap
   set ft=tar
 
-  call append(0, ['" zip.vim version '.g:loaded_zip,
+  call append(0, ['" zip.vim version '.g:loaded_rzip,
  \                '" Browsing zipfile '.zipfilename,
  \                '" Select a file with cursor and press ENTER'])
   keepj $
@@ -285,7 +289,7 @@ fun! zip#Browse(zipfile)
   exe "keepj sil! r! ".g:zip_unzipcmd." -Z -1 -- ".s:Escape(zipfile,1)
   if v:shell_error != 0
    redraw!
-   echohl WarningMsg | echo "***warning*** (zip#Browse) ".fnameescape(zipfile)." is not a zip file" | echohl None
+   echohl WarningMsg | echo "***warning*** (rzip#Browse) ".fnameescape(zipfile)." is not a zip file" | echohl None
    keepj sil! %d
    let eikeep= &ei
    set ei=BufReadCmd,FileReadCmd
@@ -364,19 +368,19 @@ function! s:RWrite(bufnr)
     return dict
 endfunction
 
-fun! zip#Write(bufnr)
+fun! rzip#Write(bufnr)
   let repkeep= &report
   set report=10
 
   if !executable(substitute(g:zip_zipcmd,'\s\+.*$','',''))
    redraw!
-   echohl Error | echo "***error*** (zip#Write) sorry, your system doesn't appear to have the ".g:zip_zipcmd." program" | echohl None
+   echohl Error | echo "***error*** (rzip#Write) sorry, your system doesn't appear to have the ".g:zip_zipcmd." program" | echohl None
    let &report= repkeep
    return
   endif
   if !exists("*mkdir")
    redraw!
-   echohl Error | echo "***error*** (zip#Write) sorry, mkdir() doesn't work on your system" | echohl None
+   echohl Error | echo "***error*** (rzip#Write) sorry, mkdir() doesn't work on your system" | echohl None
    let &report= repkeep
    return
   endif
@@ -388,7 +392,7 @@ fun! zip#Write(bufnr)
   endif
   call mkdir(tmpdir,"p")
 
-  if s:ChgDir(tmpdir,s:ERROR,"(zip#Write) cannot cd to temporary directory")
+  if s:ChgDir(tmpdir,s:ERROR,"(rzip#Write) cannot cd to temporary directory")
    let &report= repkeep
    return
   endif
@@ -436,7 +440,7 @@ fun! zip#Write(bufnr)
    redraw!
    let msg = substitute(msg,"\r","","ge")
    echoerr msg
-   echohl Error | echo "***error*** (zip#Write) sorry, unable to update ".zipfile." with ".fname | echohl None
+   echohl Error | echo "***error*** (rzip#Write) sorry, unable to update ".zipfile." with ".fname | echohl None
 
   elseif s:zipfile_{winnr()} =~ '^\a\+://'
    let netzipfile= s:zipfile_{winnr()}
@@ -454,7 +458,7 @@ fun! zip#Write(bufnr)
 
   cd ..
   call s:Rmdir("_ZIPVIM_")
-  call s:ChgDir(curdir,s:WARNING,"(zip#Write) unable to return to ".curdir."!")
+  call s:ChgDir(curdir,s:WARNING,"(rzip#Write) unable to return to ".curdir."!")
   call s:Rmdir(tmpdir)
   setlocal nomod
 
