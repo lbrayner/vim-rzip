@@ -22,10 +22,10 @@ In $PATH:
 
 # Configuration
 
-Extra file extensions can be added with **g:zipPlugin_extra_ext**. For example:
+Extra file extensions can be added with **g:rzipPlugin_extra_ext**. For example:
 
 ```vim
-let g:zipPlugin_extra_ext = '*.odt,*.mfh'
+let g:rzipPlugin_extra_ext = '*.odt,*.mfh'
 ```
 
 # Appendix

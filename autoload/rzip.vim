@@ -52,7 +52,7 @@ fun! rzip#Read(fname,mode)
   endif
 
   let extension   = fnamemodify(fname,':e')
-  if has_key(g:zipPlugin_ext_dict,extension)
+  if has_key(g:rzipPlugin_ext_dict,extension)
       " return v:null  " let rzip#Browse (triggered by an autocmd) handle the nested zip file
       return
   endif
