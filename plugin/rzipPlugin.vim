@@ -1,7 +1,14 @@
 if &cp || exists("g:loaded_rzipPlugin")
     finish
 endif
-let g:loaded_rzip= "v27m-rzip"
+
+if &shell !~# 'sh'
+    if &shellslash
+        echomsg "shellslash and a non-Unix shell do not play well together."
+    endif
+endif
+
+let g:loaded_rzip="v27m-rzip"
 
 if exists("g:loaded_zip")
     unlet g:loaded_zip
