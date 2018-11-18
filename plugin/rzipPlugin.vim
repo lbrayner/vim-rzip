@@ -15,10 +15,10 @@ if exists("g:loaded_zipPlugin")
 endif
 let zipPlugindotvim = rzip#util#escapeFileName($VIMRUNTIME).'/plugin/zipPlugin.vim'
 exec "source ".zipPlugindotvim
-let g:loaded_zipPlugin=1
+let g:loaded_zipPlugin="v27"
 
 " {{{ g:zipPlugin_ext's original value
-let g:zipPlugin_ext='*.apk,*.celzip,*.crtx,*.docm,*.docx,*.dotm,*.dotx,*.ear,*.epub,*.gcsx,*.glox,*.gqsx,*.ja,*.jar,*.kmz,*.oxt,*.potm,*.potx,*.ppam,*.ppsm,*.ppsx,*.pptm,*.pptx,*.sldx,*.thmx,*.vdw,*.war,*.wsz,*.xap,*.xlam,*.xlsb,*.xlsm,*.xlsx,*.xltm,*.xltx,*.xpi,*.zip'
+let g:zipPlugin_ext='*.apk,*.celzip,*.crtx,*.docm,*.docx,*.dotm,*.dotx,*.ear,*.epub,*.gcsx,*.glox,*.gqsx,*.ja,*.jar,*.kmz,*.oxt,*.potm,*.potx,*.ppam,*.ppsm,*.ppsx,*.pptm,*.pptx,*.sldx,*.thmx,*.vdw,*.war,*.wsz,*.xap,*.xlam,*.xlsb,*.xlsm,*.xlsx,*.xltm,*.xltx,*.xpi,*.zip,.*xlam'
 " }}}
 
 if exists("g:rzipPlugin_extra_ext")
@@ -27,11 +27,13 @@ endif
 
 try
     let s:ext_list = split(substitute(g:zipPlugin_ext,'[,.*]\+',' ','g'),' ')
-    exe 'let g:rzipPlugin_ext_dict = {' join(map(s:ext_list,'"\"".v:val."\""'),':"",') . ':""}'
+    exe 'let g:rzipPlugin_ext_dict = {' 
+                \ . join(map(s:ext_list,'"\"".v:val."\""'),':"",') . ':""}'
 catch
     unlet g:loaded_zipPlugin
     unlet g:loaded_rzipPlugin
-    echoe "There was an error processing g:zipPlugin_ext: " . v:exception
+    echoe "There was an error processing g:zipPlugin_ext and " 
+                \ . "g:rzipPlugin_extra_ext: " . v:exception
     finish
 endtry
 
