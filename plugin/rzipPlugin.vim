@@ -30,19 +30,12 @@ let g:rzipPlugin_ext_dict = {
             \ 'xpi': '','zip': ''
             \ } " duplicate entry xlam removed
 
-if exists("g:rzipPlugin_extra_ext")
-    let g:zipPlugin_ext = g:rzipPlugin_extra_ext
-else
-    let g:zipPlugin_ext = ""
-endif
+let g:zipPlugin_ext = join(keys(g:rzipPlugin_ext_dict),',*.')
+let g:zipPlugin_ext = '*.'.g:zipPlugin_ext
 
-for key in keys(g:rzipPlugin_ext_dict)
-    let item = ',*.'.key
-    if empty(g:zipPlugin_ext)
-        let item = '*.'.key
-    endif
-    let g:zipPlugin_ext = g:zipPlugin_ext.item
-endfor
+if exists("g:rzipPlugin_extra_ext")
+    let g:zipPlugin_ext .= ','.g:rzipPlugin_extra_ext
+endif
 
 augroup zip
  au!
