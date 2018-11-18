@@ -1,4 +1,4 @@
-if &cp || exists("g:loaded_rzipPlugin")
+if &cp || exists("g:loaded_rzip")
     finish
 endif
 
