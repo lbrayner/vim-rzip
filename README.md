@@ -20,6 +20,41 @@ In $PATH:
 
 - a zip compatible command.
 
+# Installation
+
+## Vim 8.0+ (+packages)
+
+If you're using Vim 8.0 or greater (if `:echo has("packages")` returns 1), you
+can add *vim-rzip* as a package.
+
+When you're done with the following steps make sure to read about packages:
+`:h packages`.
+
+- If your *.vim* folder is NOT a git repository:
+
+```
+$ mkdir ~/.vim/pack/bundle/start
+$ cd ~/.vim/pack/bundle/start
+start $ git clone 'https://github.com/lbrayner/vim-rzip'
+```
+
+- If your *.vim* folder IS a git repository:
+
+```
+$ mkdir ~/.vim/pack/bundle/start
+$ cd ~/.vim
+$ git submodule add 'https://github.com/lbrayner/vim-rzip' pack/bundle/start/vim-rzip
+$ git submodule init --update
+```
+
+This will install *vim-rzip* as a
+[git submodule](https://git-scm.com/book/en/v2/Git-Tools-Submodules).
+
+## Plugin manager
+
+Either [vim-pathogen](https://github.com/tpope/vim-pathogen) or
+[Vundle](https://github.com/VundleVim/Vundle.vim).
+
 # Configuration
 
 Extra file extensions can be added with **g:rzipPlugin_extra_ext**. For example:
