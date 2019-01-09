@@ -33,7 +33,7 @@ When you're done with the following steps make sure to read about packages:
 - If your *.vim* folder is NOT a git repository:
 
 ```
-$ mkdir ~/.vim/pack/bundle/start
+$ mkdir -p ~/.vim/pack/bundle/start
 $ cd ~/.vim/pack/bundle/start
 start $ git clone 'https://github.com/lbrayner/vim-rzip'
 ```
@@ -41,7 +41,7 @@ start $ git clone 'https://github.com/lbrayner/vim-rzip'
 - If your *.vim* folder IS a git repository:
 
 ```
-$ mkdir ~/.vim/pack/bundle/start
+$ mkdir -p ~/.vim/pack/bundle/start
 $ cd ~/.vim
 .vim $ git submodule add 'https://github.com/lbrayner/vim-rzip' pack/bundle/start/vim-rzip
 .vim $ git submodule update --init
