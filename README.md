@@ -44,7 +44,6 @@ start $ git clone 'https://github.com/lbrayner/vim-rzip'
 $ mkdir -p ~/.vim/pack/bundle/start
 $ cd ~/.vim
 .vim $ git submodule add 'https://github.com/lbrayner/vim-rzip' pack/bundle/start/vim-rzip
-.vim $ git submodule update --init
 ```
 
 This will install *vim-rzip* as a
