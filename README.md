@@ -1,3 +1,5 @@
+[![asciicast](https://asciinema.org/a/233809.svg)](https://asciinema.org/a/233809)
+
 Extends stock zipPlugin.vim to allow recursively browsing and writing zip files.
 
 VimL and system calls only (zip, unzip and copy file).
