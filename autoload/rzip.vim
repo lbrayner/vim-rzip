@@ -56,12 +56,14 @@ fun! rzip#Read(fname,mode)
 
   let extension   = fnamemodify(fname,':e')
   if has_key(g:rzipPlugin_ext_dict,extension)
-      " return v:null  " let rzip#Browse (triggered by an autocmd) handle the nested zip file
+      " let rzip#Browse (triggered by an autocmd) handle the nested zip file
       return
   endif
   let temp = tempname()
   let fn   = expand('%:p')
-  exe "sil! !".g:zip_unzipcmd." -p -- ".s:Escape(zipfile,1)." ".s:Escape(fnameescape(fname),1).' > '.temp
+  let unzipcmd = g:zip_unzipcmd." -p -- ".s:Escape(zipfile,1)." "
+        \.s:Escape(fname,1).' > '.temp
+  exe "sil! !".unzipcmd
   sil exe 'keepalt file '.temp
   sil keepj e!
   sil exe 'keepalt file '.fnameescape(fn)
@@ -190,8 +192,9 @@ function! s:GetNestedZipFile(zipfile)
         let temp = tempname()
         let temp = temp.".zip"
         let target = ziplist[index]
-        exe "sil! !".g:zip_unzipcmd." -p -- ".s:Escape(container,1)." "
-                    \ .s:Escape(fnameescape(target),1).' > '.temp
+        let unzipcmd = g:zip_unzipcmd." -p -- ".s:Escape(container,1)." "
+                    \ .s:Escape(target,1).' > '.temp
+        exe "sil! !".unzipcmd
         if index > 1
             call delete(container)
         endif
@@ -202,7 +205,7 @@ endfunction
 
 fun! s:ChgDir(newdir,errlvl,errmsg)
   try
-   exe "cd ".fnameescape(a:newdir)
+   exe "cd ".a:newdir
   catch /^Vim\%((\a\+)\)\=:E344/
    redraw!
    if a:errlvl == s:NOTE
@@ -223,30 +226,30 @@ function! s:GetZipTail(fname)
 endfunction
 
 fun! rzip#Browse(zipfile)
-    let zipfile = a:zipfile
+  let zipfile = a:zipfile
   if !filereadable(zipfile) || readfile(zipfile, "", 1)[0] !~ '^PK'
-        if !filereadable(s:GetZipFile(zipfile))
-            exe "noautocmd e ".fnameescape(zipfile)
-            return
-        else
-            let head = s:GetZipFile(zipfile)
-            let tail = s:GetFileName(zipfile)
-            let zipfilename = s:MakeZipPattern(head,tail)
-            let zipnested = 1
-            let zipfile = s:GetNestedZipFile(zipfile)
-            if has_key(getbufvar('#',''),'nested_zipfile_list')
-                let nested_zipfile_list =
-                            \ deepcopy(getbufvar('#','nested_zipfile_list'),1)
-                let zipparent = getbufvar('#','zipfile')
-                let zipname = s:GetZipTail(s:GetZipTail(a:zipfile))
-                call insert(nested_zipfile_list,
-                            \ {'zipname': zipname, 'zipfile': zipparent})
-            else
-                let b:nested_zipfile_list = [{'zipname': head, 'zipfile': head}]
-            endif
-        endif
+    if !filereadable(s:GetZipFile(zipfile))
+      exe "noautocmd e ".fnameescape(zipfile)
+      return
+    else
+      let head = s:GetZipFile(zipfile)
+      let tail = s:GetFileName(zipfile)
+      let zipfilename = s:MakeZipPattern(head,tail)
+      let zipnested = 1
+      let zipfile = s:GetNestedZipFile(zipfile)
+      if has_key(getbufvar('#',''),'nested_zipfile_list')
+        let nested_zipfile_list =
+              \ deepcopy(getbufvar('#','nested_zipfile_list'),1)
+        let zipparent = getbufvar('#','zipfile')
+        let zipname = s:GetZipTail(s:GetZipTail(a:zipfile))
+        call insert(nested_zipfile_list,
+              \ {'zipname': zipname, 'zipfile': zipparent})
+      else
+        let b:nested_zipfile_list = [{'zipname': head, 'zipfile': head}]
+      endif
+    endif
   else
-        let zipfilename = zipfile
+    let zipfilename = zipfile
   endif
 
   let repkeep= &report
@@ -465,3 +468,5 @@ fun! rzip#Write(bufnr)
 
   let &report= repkeep
 endfun
+
+" vim:shiftwidth=2
