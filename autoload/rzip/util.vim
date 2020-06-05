@@ -5,5 +5,5 @@ function! rzip#util#vimmap(leftside,keyseq,keyseqtarget)
 endfunction
 
 function! rzip#util#escapeFileName(filename)
-    return fnameescape(substitute(a:filename, '\', '/', 'g'))
+    return substitute(a:filename, '\', '/', 'g')
 endfunction

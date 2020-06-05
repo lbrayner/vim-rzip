@@ -317,7 +317,6 @@ endfun
 
 function! s:RWrite(bufnr)
     let nested_zipfile_list = getbufvar(str2nr(a:bufnr),'nested_zipfile_list')
-    " let fname = s:GetZipTail(getbufinfo(str2nr(a:bufnr))[0]['name'])
     let fname = s:GetZipTail(bufname(a:bufnr))
     let zipfile = nested_zipfile_list[0]['zipfile']
 
@@ -411,7 +410,6 @@ fun! rzip#Write(bufnr)
       let fname = dict['fname']
       let zipfile = dict['zipfile']
   else
-      " let fname = getbufinfo(str2nr(a:bufnr))[0]['name']
       let fname = bufname(str2nr(a:bufnr))
       let zipfile = rzip#util#escapeFileName(s:GetZipFile(fname))
       let fname = rzip#util#escapeFileName(s:GetFileName(fname))
