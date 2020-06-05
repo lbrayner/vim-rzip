@@ -2,7 +2,7 @@ if &cp || exists("g:loaded_rzipPlugin")
     finish
 endif
 
-if &shell !~# 'sh'
+if &shell !~? '\vsh(\.exe)?$'
     if &shellslash
         echomsg "shellslash and a non-Unix shell do not play well together."
     endif
@@ -27,12 +27,12 @@ endif
 
 try
     let s:ext_list = split(substitute(g:zipPlugin_ext,'[,.*]\+',' ','g'),' ')
-    exe 'let g:rzipPlugin_ext_dict = {' 
+    exe 'let g:rzipPlugin_ext_dict = {'
                 \ . join(map(s:ext_list,'"\"".v:val."\""'),':"",') . ':""}'
 catch
     unlet g:loaded_zipPlugin
     unlet g:loaded_rzipPlugin
-    echoe "There was an error processing g:zipPlugin_ext and " 
+    echoe "There was an error processing g:zipPlugin_ext and "
                 \ . "g:rzipPlugin_extra_ext: " . v:exception
     finish
 endtry
