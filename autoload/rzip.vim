@@ -16,7 +16,7 @@ let s:WARNING        = 1
 let s:NOTE           = 0
 
 fun! s:Rmdir(fname)
-  if (has("win32") || has("win95") || has("win64") || has("win16")) && &shell !~? 'sh$'
+  if (has("win32") || has("win95") || has("win64") || has("win16")) && &shell !~? '\vsh(\.exe)?$'
    call system("rmdir /S/Q ".s:Escape(a:fname,0))
   else
    call system("/bin/rm -rf ".s:Escape(a:fname,0))
@@ -34,7 +34,10 @@ fun! s:Escape(fname,isfilt)
    let qnameq= g:zip_shq.escape(a:fname,g:zip_shq).g:zip_shq
   endif
   " Wildcard expressions
-  return escape(qnameq,'][*?')
+  if has("unix")
+    let qnameq = escape(qnameq,'][*?')
+  endif
+  return qnameq
 endfun
 
 fun! rzip#Read(fname,mode)
@@ -435,7 +438,7 @@ fun! rzip#Write(bufnr)
    let zipfile = substitute(system("cygpath ".s:Escape(zipfile,0)),'\n','','e')
   endif
 
-  if (has("win32") || has("win95") || has("win64") || has("win16")) && &shell !~? 'sh$'
+  if (has("win32") || has("win95") || has("win64") || has("win16")) && &shell !~? '\vsh(\.exe)?$'
     let fname = substitute(fname, '[', '[[]', 'g')
   endif
 
