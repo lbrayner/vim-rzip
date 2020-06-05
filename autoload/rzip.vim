@@ -33,7 +33,8 @@ fun! s:Escape(fname,isfilt)
   else
    let qnameq= g:zip_shq.escape(a:fname,g:zip_shq).g:zip_shq
   endif
-  return qnameq
+  " Wildcard expressions
+  return escape(qnameq,'][*?')
 endfun
 
 fun! rzip#Read(fname,mode)
@@ -94,7 +95,6 @@ function! s:GetFileName(fname)
   endif
   return fname
 endfunction
-
 
 function! s:MakeZipPattern(zipfile,fname)
   return "zipfile:".a:zipfile.'::'.a:fname
