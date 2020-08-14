@@ -1,8 +1,8 @@
 [![asciicast](https://asciinema.org/a/233809.svg)](https://asciinema.org/a/233809)
 
-Extends stock zipPlugin.vim to allow recursively browsing and writing zip files.
+Extends stock `zipPlugin.vim` to allow recursively browsing and writing *Zip* files.
 
-VimL and system calls only (zip, unzip and copy file).
+*VimL* and system calls only (*zip*, *unzip* and copy file).
 
 # Requirements
 
@@ -12,27 +12,27 @@ VimL and system calls only (zip, unzip and copy file).
 
 ## To browse
 
-In $PATH:
+In `$PATH`:
 
-- an unzip compatible command.
+- an *unzip* compatible command.
 
 ## To write
 
-In $PATH:
+In `$PATH`:
 
-- a zip compatible command.
+- a *zip* compatible command.
 
 # Installation
 
 ## Vim 8.0+ (+packages)
 
 If you're using Vim 8.0 or greater (if `:echo has("packages")` returns 1), you
-can add *vim-rzip* as a package.
+can add `vim-rzip` as a package.
 
 When you're done with the following steps make sure to read about packages:
 `:h packages`.
 
-- If your *.vim* folder is NOT a git repository:
+- If your *.vim* folder is NOT a *Git* repository:
 
 ```
 $ mkdir -p ~/.vim/pack/bundle/start
@@ -40,7 +40,7 @@ $ cd ~/.vim/pack/bundle/start
 start $ git clone 'https://github.com/lbrayner/vim-rzip'
 ```
 
-- If your *.vim* folder IS a git repository:
+- If your *.vim* folder IS a *Git* repository:
 
 ```
 $ mkdir -p ~/.vim/pack/bundle/start
@@ -48,7 +48,7 @@ $ cd ~/.vim
 .vim $ git submodule add 'https://github.com/lbrayner/vim-rzip' pack/bundle/start/vim-rzip
 ```
 
-This will install *vim-rzip* as a
+This will install `vim-rzip` as a
 [git submodule](https://git-scm.com/book/en/v2/Git-Tools-Submodules).
 
 ## Plugin manager
@@ -63,7 +63,7 @@ When you open a file with any of these extensions (per default) —
 *.gcsx*, *.glox*, *.gqsx*, *.ja*, *.jar*, *.kmz*, *.oxt*, *.potm*, *.potx*,
 *.ppam*, *.ppsm*, *.ppsx*, *.pptm*, *.pptx*, *.sldx*, *.thmx*, *.vdw*, *.war*,
 *.wsz*, *.xap*, *.xlam*, *.xlam*, *.xlsb*, *.xlsm*, *.xlsx*, *.xltm*, *.xltx*,
-*.xpi*, *.zip* — you'll see the default zipPlugin.vim message, except that the
+*.xpi*, *.zip* — you'll see the default `zipPlugin.vim` message, except that the
 version, on the first line, should have a *m-rzip* suffix (e.g. *v27m-rzip*).
 
 # Configuration
@@ -76,12 +76,12 @@ let g:rzipPlugin_extra_ext = '*.odt,*.mfh'
 
 # Appendix
 
-On Unix just install zip and unzip packages.
+On Unix-like operating systems, just install the `zip` and `unzip` packages.
 
 You can get the *unzip.exe* binary for Windows [here](http://www.stahlworks.com/dev/index.php?tool=zipunzip).
 
 A zip-compatible program need only implement the **-u** (*update*) command line switch.
-An example of a zip-compatible dosbatch script for Windows using 7zip:
+An example of a zip-compatible dosbatch script for Windows using *7zip*:
 
 ```bat
 @echo off
@@ -100,4 +100,4 @@ if "%~1" == "-u" (
 7z %*
 ```
 
-Save this as zip.bat and put in your $PATH.
+Save this as `zip.bat` and put in your `$PATH`.
