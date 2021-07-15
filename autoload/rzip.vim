@@ -240,7 +240,8 @@ fun! rzip#Browse(zipfile)
       let zipfilename = s:MakeZipPattern(head,tail)
       let zipnested = 1
       let zipfile = s:GetNestedZipFile(zipfile)
-      if has_key(getbufvar('#',''),'nested_zipfile_list')
+      if type(getbufvar('#','')) == type({}) &&
+            \ has_key(getbufvar('#',''),'nested_zipfile_list')
         let nested_zipfile_list =
               \ deepcopy(getbufvar('#','nested_zipfile_list'),1)
         let zipparent = getbufvar('#','zipfile')
@@ -285,7 +286,7 @@ fun! rzip#Browse(zipfile)
 
   setlocal noswapfile
   setlocal buftype=nofile
-  setlocal bufhidden=hide
+  setlocal bufhidden=wipe
   setlocal nobuflisted
   setlocal nowrap
   set ft=tar
