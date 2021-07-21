@@ -450,7 +450,7 @@ fun! rzip#Write(bufnr)
    echoerr msg
    echohl Error | echo "***error*** (rzip#Write) sorry, unable to update ".zipfile." with ".fname | echohl None
 
-  elseif s:zipfile_{winnr()} =~ '^\a\+://'
+  elseif exists("s:zipfile_".winnr()) && s:zipfile_{winnr()} =~ '^\a\+://'
    let netzipfile= s:zipfile_{winnr()}
    1split|enew
    let binkeep= &binary
