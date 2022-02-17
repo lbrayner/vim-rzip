@@ -8,14 +8,13 @@ if &shell !~? '\vsh(\.exe)?$'
     endif
 endif
 
-let g:loaded_rzipPlugin="v27m-rzip"
+let g:loaded_rzipPlugin="v014"
 
 if exists("g:loaded_zipPlugin")
     unlet g:loaded_zipPlugin
 endif
-let zipPlugindotvim = rzip#util#escapeFileName($VIMRUNTIME).'/plugin/zipPlugin.vim'
-exec "source ".zipPlugindotvim
-let g:loaded_zipPlugin="v27"
+let zipplugindotvim = expand("<sfile>:p:h").'/../../plugin/zipPlugin.vim'
+exec "source ".zipplugindotvim
 
 " {{{ g:zipPlugin_ext's original value
 let g:zipPlugin_ext='*.apk,*.celzip,*.crtx,*.docm,*.docx,*.dotm,*.dotx,*.ear,*.epub,*.gcsx,*.glox,*.gqsx,*.ja,*.jar,*.kmz,*.oxt,*.potm,*.potx,*.ppam,*.ppsm,*.ppsx,*.pptm,*.pptx,*.sldx,*.thmx,*.vdw,*.war,*.wsz,*.xap,*.xlam,*.xlsb,*.xlsm,*.xlsx,*.xltm,*.xltx,*.xpi,*.zip'

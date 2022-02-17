@@ -63,8 +63,9 @@ When you open a file with any of these extensions (per default) —
 *.gcsx*, *.glox*, *.gqsx*, *.ja*, *.jar*, *.kmz*, *.oxt*, *.potm*, *.potx*,
 *.ppam*, *.ppsm*, *.ppsx*, *.pptm*, *.pptx*, *.sldx*, *.thmx*, *.vdw*, *.war*,
 *.wsz*, *.xap*, *.xlam*, *.xlam*, *.xlsb*, *.xlsm*, *.xlsx*, *.xltm*, *.xltx*,
-*.xpi*, *.zip* — you'll see the default `zipPlugin.vim` message, except that the
-version, on the first line, should have a *m-rzip* suffix (e.g. *v27m-rzip*).
+*.xpi*, *.zip* — you'll see the default `zipPlugin.vim` message, except that:
+the plugin name is *rzip.vim*; and the version, on the first line, should read
+something like *v014*.
 
 # Configuration
 

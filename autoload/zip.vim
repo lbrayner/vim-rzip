@@ -1,18 +1,20 @@
 " zip.vim: Handles browsing zipfiles
 "            AUTOLOAD PORTION
-" Date:		Sep 13, 2016
-" Version:	28
-" Maintainer:	Charles E Campbell <NdrOchip@ScampbellPfamily.AbizM-NOSPAM>
-" License:	Vim License  (see vim's :help license)
-" Copyright:    Copyright (C) 2005-2013 Charles E. Campbell {{{1
-"               Permission is hereby granted to use and distribute this code,
-"               with or without modifications, provided that this copyright
-"               notice is copied with it. Like anything else that's free,
-"               zip.vim and zipPlugin.vim are provided *as is* and comes with
-"               no warranty of any kind, either expressed or implied. By using
-"               this plugin, you agree that in no event will the copyright
-"               holder be liable for any damages resulting from the use
-"               of this software.
+" Maintainer:           lbrayner
+" Date:                 2022 Feb 17
+" Version:              28+lbrayner.1
+" Upstream Version:     28
+" Author:               Charles E Campbell <NdrOchip@ScampbellPfamily.AbizM-NOSPAM>
+" License:              Vim License  (see vim's :help license)
+" Copyright:            Copyright (C) 2005-2013 Charles E. Campbell {{{1
+"                       Permission is hereby granted to use and distribute this code,
+"                       with or without modifications, provided that this copyright
+"                       notice is copied with it. Like anything else that's free,
+"                       zip.vim and zipPlugin.vim are provided *as is* and comes with
+"                       no warranty of any kind, either expressed or implied. By using
+"                       this plugin, you agree that in no event will the copyright
+"                       holder be liable for any damages resulting from the use
+"                       of this software.
 "redraw!|call DechoSep()|call inputsave()|call input("Press <cr> to continue")|call inputrestore()
 
 " ---------------------------------------------------------------------
@@ -20,7 +22,7 @@
 if &cp || exists("g:loaded_zip")
  finish
 endif
-let g:loaded_zip= "v28"
+let g:loaded_zip= "v28+lbrayner.1"
 if v:version < 702
  echohl WarningMsg
  echo "***warning*** this version of zip needs vim 7.2 or later"
@@ -184,8 +186,8 @@ fun! s:ZipBrowseSelect()
    wincmd _
   endif
   let s:zipfile_{winnr()}= curfile
-"  call Decho("exe e ".fnameescape("zipfile:".zipfile.'::'.fname))
-  exe "e ".fnameescape("zipfile:".zipfile.'::'.fname)
+"  call Decho("exe e ".fnameescape("zipfile://".zipfile.'::'.fname))
+  exe "e ".fnameescape("zipfile://".zipfile.'::'.fname)
   filetype detect
 
   let &report= repkeep
@@ -200,11 +202,11 @@ fun! zip#Read(fname,mode)
   set report=10
 
   if has("unix")
-   let zipfile = substitute(a:fname,'zipfile:\(.\{-}\)::[^\\].*$','\1','')
-   let fname   = substitute(a:fname,'zipfile:.\{-}::\([^\\].*\)$','\1','')
+   let zipfile = substitute(a:fname,'zipfile://\(.\{-}\)::[^\\].*$','\1','')
+   let fname   = substitute(a:fname,'zipfile://.\{-}::\([^\\].*\)$','\1','')
   else
-   let zipfile = substitute(a:fname,'^.\{-}zipfile:\(.\{-}\)::[^\\].*$','\1','')
-   let fname   = substitute(a:fname,'^.\{-}zipfile:.\{-}::\([^\\].*\)$','\1','')
+   let zipfile = substitute(a:fname,'^.\{-}zipfile://\(.\{-}\)::[^\\].*$','\1','')
+   let fname   = substitute(a:fname,'^.\{-}zipfile://.\{-}::\([^\\].*\)$','\1','')
    let fname   = substitute(fname, '[', '[[]', 'g')
   endif
 "  call Decho("zipfile<".zipfile.">")
@@ -221,7 +223,7 @@ fun! zip#Read(fname,mode)
 
   " the following code does much the same thing as
   "   exe "keepj sil! r! ".g:zip_unzipcmd." -p -- ".s:Escape(zipfile,1)." ".s:Escape(fnameescape(fname),1)
-  " but allows zipfile:... entries in quickfix lists
+  " but allows zipfile://... entries in quickfix lists
   let temp = tempname()
 "  call Decho("using temp file<".temp.">")
   let fn   = expand('%:p')
@@ -293,11 +295,11 @@ fun! zip#Write(fname)
 "  call Decho("current directory now: ".getcwd())
 
   if has("unix")
-   let zipfile = substitute(a:fname,'zipfile:\(.\{-}\)::[^\\].*$','\1','')
-   let fname   = substitute(a:fname,'zipfile:.\{-}::\([^\\].*\)$','\1','')
+   let zipfile = substitute(a:fname,'zipfile://\(.\{-}\)::[^\\].*$','\1','')
+   let fname   = substitute(a:fname,'zipfile://.\{-}::\([^\\].*\)$','\1','')
   else
-   let zipfile = substitute(a:fname,'^.\{-}zipfile:\(.\{-}\)::[^\\].*$','\1','')
-   let fname   = substitute(a:fname,'^.\{-}zipfile:.\{-}::\([^\\].*\)$','\1','')
+   let zipfile = substitute(a:fname,'^.\{-}zipfile://\(.\{-}\)::[^\\].*$','\1','')
+   let fname   = substitute(a:fname,'^.\{-}zipfile://.\{-}::\([^\\].*\)$','\1','')
   endif
 "  call Decho("zipfile<".zipfile.">")
 "  call Decho("fname  <".fname.">")

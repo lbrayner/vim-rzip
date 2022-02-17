@@ -5,11 +5,10 @@ endif
 if exists("g:loaded_zip")
     unlet g:loaded_zip
 endif
-let zipdotvim = rzip#util#escapeFileName($VIMRUNTIME).'/autoload/zip.vim'
+let zipdotvim = expand("<sfile>:p:h").'/../../autoload/zip.vim'
 exec "source ".zipdotvim
-let g:loaded_zip="v27"
 
-let g:loaded_rzip= "v27m-rzip"
+let g:loaded_rzip= "v014"
 let s:zipfile_escape = ' ?&;\'
 let s:ERROR          = 2
 let s:WARNING        = 1
@@ -82,25 +81,25 @@ endfun
 
 function! s:GetZipFile(fname)
   if has("unix")
-   let zipfile = substitute(a:fname,'zipfile:\(.\{-}\)::[^\\].*$','\1','')
+   let zipfile = substitute(a:fname,'zipfile://\(.\{-}\)::[^\\].*$','\1','')
   else
-   let zipfile = substitute(a:fname,'^.\{-}zipfile:\(.\{-}\)::[^\\].*$','\1','')
+   let zipfile = substitute(a:fname,'^.\{-}zipfile://\(.\{-}\)::[^\\].*$','\1','')
   endif
   return zipfile
 endfunction
 
 function! s:GetFileName(fname)
   if has("unix")
-   let fname   = substitute(a:fname,'zipfile:.\{-}::\([^\\].*\)$','\1','')
+   let fname   = substitute(a:fname,'zipfile://.\{-}::\([^\\].*\)$','\1','')
   else
-   let fname   = substitute(a:fname,'^.\{-}zipfile:.\{-}::\([^\\].*\)$','\1','')
+   let fname   = substitute(a:fname,'^.\{-}zipfile://.\{-}::\([^\\].*\)$','\1','')
    let fname   = substitute(fname, '[', '[[]', 'g')
   endif
   return fname
 endfunction
 
 function! s:MakeZipPattern(zipfile,fname)
-  return "zipfile:".a:zipfile.'::'.a:fname
+  return "zipfile://".a:zipfile.'::'.a:fname
 endfunction
 
 function! s:CopyFile(src,dst)
@@ -155,7 +154,7 @@ fun! s:ZipBrowseSelect(zipfname)
   let zipfilebufnr= bufnr("%")
 
   let zipfname = a:zipfname
-  if(zipfname =~# 'zipfile:')
+  if(zipfname =~# 'zipfile://')
         let nested_zipfile_list =
                     \ deepcopy(b:nested_zipfile_list,1)
         let zipparent = b:zipfile
@@ -169,11 +168,11 @@ fun! s:ZipBrowseSelect(zipfname)
    wincmd _
   endif
   let s:zipfile_{winnr()}= curfile
-  if(zipfname =~# 'zipfile:')
+  if(zipfname =~# 'zipfile://')
       exe "keepalt e ".fnameescape(zipfname.'::'.fname)
       let b:nested_zipfile_list = nested_zipfile_list
   else
-      exe "keepalt e ".fnameescape("zipfile:".zipfile.'::'.fname)
+      exe "keepalt e ".fnameescape("zipfile://".zipfile.'::'.fname)
   endif
   filetype detect
 
@@ -291,7 +290,7 @@ fun! rzip#Browse(zipfile)
   setlocal nowrap
   set ft=tar
 
-  call append(0, ['" zip.vim version '.g:loaded_rzip,
+  call append(0, ['" rzip.vim version '.g:loaded_rzip,
  \                '" Browsing zipfile '.zipfilename,
  \                '" Select a file with cursor and press ENTER'])
   keepj $
