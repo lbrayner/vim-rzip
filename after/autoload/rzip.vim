@@ -8,7 +8,7 @@ endif
 let zipdotvim = expand("<sfile>:p:h").'/../../autoload/zip.vim'
 exec "source ".zipdotvim
 
-let g:loaded_rzip= "v014"
+let g:loaded_rzip= "v015"
 let s:zipfile_escape = ' ?&;\'
 let s:ERROR          = 2
 let s:WARNING        = 1
@@ -449,7 +449,10 @@ fun! rzip#Write(bufnr)
    echoerr msg
    echohl Error | echo "***error*** (rzip#Write) sorry, unable to update ".zipfile." with ".fname | echohl None
 
-  elseif exists("s:zipfile_".winnr()) && s:zipfile_{winnr()} =~ '^\a\+://'
+  " Writing recursively accross the network not supported
+  elseif exists("s:zipfile_".winnr()) &&
+        \ s:zipfile_{winnr()} !~ '^zipfile://' &&
+        \ s:zipfile_{winnr()} =~ '^\a\+://'
    let netzipfile= s:zipfile_{winnr()}
    1split|enew
    let binkeep= &binary
