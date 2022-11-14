@@ -1,4 +1,4 @@
-[![asciicast](https://asciinema.org/a/233809.svg)](https://asciinema.org/a/233809)
+[![asciicast](https://asciinema.org/a/531651.svg)](https://asciinema.org/a/531651)
 
 Extends stock `zipPlugin.vim` to allow recursively browsing and writing *Zip* files.
 
