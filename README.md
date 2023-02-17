@@ -35,6 +35,13 @@ When you're done with the following steps make sure to read about packages:
 - If your *.vim* folder is NOT a *Git* repository:
 
 ```
+$ mkdir -p ~/.vim/pack/bundle/start/vim-rzip
+$ unzip ~/Downloads/vim-rzip.zip -d ~/.vim/pack/bundle/start/vim-rzip
+```
+
+Or you can clone the *Git* repository:
+
+```
 $ mkdir -p ~/.vim/pack/bundle/start
 $ cd ~/.vim/pack/bundle/start
 start $ git clone 'https://github.com/lbrayner/vim-rzip'
